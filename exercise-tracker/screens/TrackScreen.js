@@ -30,6 +30,7 @@ export default function TrackScreen({ navigation }) {
         // Append new route to routes
         Object.assign(data, { [text]: trackingData });
         // TODO 6: Store new routes value in routes
+        await AsyncStorage.setItem('routes', JSON.stringify(data));
       }
     } 
     catch (error) {
@@ -39,7 +40,7 @@ export default function TrackScreen({ navigation }) {
 
   const stopTracking = () => {
     // TODO 5: call ClearWatch here
-
+    navigator.geolocation.clearWatch(watchID);
     // Store the new route
     storeRoute();
 
@@ -49,11 +50,17 @@ export default function TrackScreen({ navigation }) {
     setTrackingData([]);
 
     // TODO 7: Navigate to the Map screen and display the new route
+
   };
 
   // TODO 3: Implement onGeolocation function
   const onGeolocation = (position) => { 
-    
+    const g = {timestamp: position.timestamp, 
+      coords: {longitude: position.coords.longitude,
+               latitude: position.coords.latitude}};
+
+    trackingData.push(g);
+    setTrackingData(trackingData);  
   };
 
   const onGeolocationError = (positionError) => {
@@ -66,6 +73,7 @@ export default function TrackScreen({ navigation }) {
       return;
     }
     //TODO 2: Get watch id from navigator.geolocation.watchPosition and set this using setWatchID
+    setWatchID(navigator.geolocation.watchPosition(onGeolocation, onGeolocationError));
   };
 
     
@@ -82,7 +90,7 @@ export default function TrackScreen({ navigation }) {
         {watchID ?
           <Submit>
             {/* TODO 8: Call stopTracking when pressed */}
-            <TouchButton onPress={null}>
+            <TouchButton onPress={stopTracking}>
               <BtnText>STOP</BtnText>
             </TouchButton>
           </Submit>
@@ -90,7 +98,6 @@ export default function TrackScreen({ navigation }) {
           <View style={{ paddingLeft: "5%" }}> 
             <ItemsLayout>
               <Holder>
-                {/* TODO 1: Implement onChangeText */}
                 <TextInput
                   style={{
                     flex: 2,
@@ -102,11 +109,11 @@ export default function TrackScreen({ navigation }) {
                   }}
                   value={text}
                   placeholder="Name your route"
-                  onChangeText={(value) => null}
+                  onChangeText={(value) => setText(value)}
                 />
                 <Submit>
                   {/* TODO 4: Call startTracking when pressed */}
-                  <TouchButton onPress={null}>
+                  <TouchButton onPress={startTracking}>
                     <BtnText>Track</BtnText>
                   </TouchButton>
                 </Submit>

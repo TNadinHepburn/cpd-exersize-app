@@ -20,9 +20,13 @@ export default function HistoryScreen({ route, navigation }) {
       const value = await AsyncStorage.getItem('routes');
       if (value === null) {
         // TODO 1: use AsyncStorage.setItem to save demoRoutes under the key 'routes' in Async Storage and then call retrieveHistory.
+        await AsyncStorage.setItem("routes", JSON.stringify(demoRoutes));
+        retrieveHistory();
       }
       else {
         // TODO 2: use JSON.parse to convert the JSON string to an object and use set this value as history.
+        setHistory(JSON.parse(value));
+        console.log(history);
       }
     } 
     catch (error) {
@@ -62,19 +66,19 @@ export default function HistoryScreen({ route, navigation }) {
           <DivideHeader />
           {Object.keys(history).map((item) => (
             // TODO 7: Navigate to Map screen with the route coords as a parameter when the row is pressed. 
-            <TouchButton key={item} onPress={() => null}>
+            <TouchButton key={item} onPress={() => navigation.navigate('MapScreen', {routeCoords: history[item]})}>
               <RowStyle key={item}>
                 <ColumnStyle key="col1">
-                  <ColumnText>{/* TODO 3: Add the name of the route .*/}</ColumnText> 
+                  <ColumnText>{item}</ColumnText> 
                 </ColumnStyle>
                 <ColumnStyle key="col2">
-                  <ColumnText>{/* TODO 4: Add the date. Convert the timestamp using timestampToDate. */}</ColumnText>
+                  <ColumnText>{timestampToDate(history[item][0].timestamp)}</ColumnText>
                 </ColumnStyle>
                 <ColumnStyle key="col3">
-                  <ColumnText>{/* TODO 5: Add the distance. Calculate the distance from the route coords using calculateDistance. */}</ColumnText> 
+                  <ColumnText>{calculateDistance(history[item])}</ColumnText> 
                 </ColumnStyle>
                 <ColumnStyle key="col4">
-                  <ColumnText>{/* TODO 6: Add the duration. Calculate the duration from the route coords using calculateTime. */}</ColumnText>
+                  <ColumnText>{calculateTime(history[item])}</ColumnText>
                 </ColumnStyle>
               </RowStyle>
               <Divide />

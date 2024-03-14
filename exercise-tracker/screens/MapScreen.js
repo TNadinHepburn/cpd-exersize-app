@@ -19,13 +19,18 @@ export default function MapScreen({ route }) {
   
   return (
     <View style={styles.container}>
-      {/* TODO 2: Set customMapStyle to mapStyle for some custom styling. */}
+      customMapStyle={mapStyle}      
       <MapView
-        style={styles.map}
+        style={customMapStyle.map}
         provider={PROVIDER_GOOGLE}
         ref={(ref) => {googlemap = ref;}}
         onMapReady={(e) => fitAllMarkers(coords)}>
-        {/* TODO 1: Implement a polyline using the route co-ordinates. */}
+        <Polyline
+            coordinates={coords}
+            strokeColor="#FFF000"
+            strokeWidth={4}
+            geodesic={true}
+            showsMyLocationButton={false} />
       </MapView>
     </View>
   ); 
